@@ -11,6 +11,16 @@ export class ProductsService {
     return { items };
   }
 
+  async getProduct(id: string) {
+    const formattedId = Number(id);
+
+    const item = await this.prisma.product.findFirst({
+      where: { id: formattedId },
+    });
+
+    return { item };
+  }
+
   async addProduct(dto: CreateProductDto) {
     // Check is Admin
     return await this.prisma.product.create({ data: dto });
