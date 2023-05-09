@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateReviewDto, DeleteReviewDto } from './dto';
+import { isNumber } from 'class-validator';
 
 @Injectable()
 export class ReviewsService {
@@ -16,7 +17,10 @@ export class ReviewsService {
   }
 
   async deleteReview(dto: DeleteReviewDto) {
-    // Check is Admin
+    if (!isNumber(dto.id)) {
+      throw new BadRequestException('Incorrect id');
+    }
+
     return await this.prisma.review.delete({ where: { id: dto.id } });
   }
 }

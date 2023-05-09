@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto, DeleteProductDto } from './dto';
+import { isNumber } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
@@ -14,6 +15,10 @@ export class ProductsService {
   async getProduct(id: string) {
     const formattedId = Number(id);
 
+    if (!isNumber(formattedId)) {
+      throw new BadRequestException('Incorrect id');
+    }
+
     const item = await this.prisma.product.findFirst({
       where: { id: formattedId },
     });
@@ -22,12 +27,14 @@ export class ProductsService {
   }
 
   async addProduct(dto: CreateProductDto) {
-    // Check is Admin
     return await this.prisma.product.create({ data: dto });
   }
 
   async deleteProduct(dto: DeleteProductDto) {
-    // Check is Admin
+    if (!isNumber(dto.id)) {
+      throw new BadRequestException('Incorrect id');
+    }
+
     return await this.prisma.product.delete({ where: { id: dto.id } });
   }
 }

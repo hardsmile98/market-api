@@ -1,6 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto, DeleteProductDto } from './dto';
+import { AdminGuard, JwtAuthGuard } from 'src/auth/guard';
 
 @Controller('products')
 export class ProductsController {
@@ -16,11 +25,13 @@ export class ProductsController {
     return this.productService.getProduct(id);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post('/')
   addProduct(@Body() dto: CreateProductDto) {
     return this.productService.addProduct(dto);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete('/')
   deleteProduct(@Body() dto: DeleteProductDto) {
     return this.productService.deleteProduct(dto);

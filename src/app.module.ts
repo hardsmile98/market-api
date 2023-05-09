@@ -6,9 +6,7 @@ import { ProductsController } from './products/products.controller';
 import { ProductsService } from './products/products.service';
 import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
-import { SettingsController } from './settings/settings.controller';
 import { SettingsModule } from './settings/settings.module';
-
 
 @Module({
   imports: [
@@ -21,7 +19,7 @@ import { SettingsModule } from './settings/settings.module';
     ReviewsModule,
     SettingsModule,
   ],
-  controllers: [ProductsController, SettingsController],
+  controllers: [ProductsController],
   providers: [ProductsService],
 })
 export class AppModule {}

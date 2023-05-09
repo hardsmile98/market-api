@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto, DeleteReviewDto } from './dto';
+import { AdminGuard, JwtAuthGuard } from 'src/auth/guard';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -16,6 +17,7 @@ export class ReviewsController {
     return this.reviewsService.addReview(dto);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete('/')
   deleteReview(@Body() dto: DeleteReviewDto) {
     return this.reviewsService.deleteReview(dto);
