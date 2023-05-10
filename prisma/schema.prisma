@@ -39,3 +39,18 @@ model Review {
   description String
   createdAt   DateTime @default(now())
 }
+
+model Settings {
+  id           Int       @id @default(autoincrement())
+  bannerImg    String    @default("")
+  buttonText   String    @default("Купить")
+  textPrimary        String    @default("#000000")
+  textSecondary      String    @default("#575757")
+  secondaryMain      String    @default("#300216")
+  secondaryDark      String    @default("#541E35")
+  secondaryLight     String    @default("#FF6A55")
+  backgroundDefault  String    @default("#F7F1EE")
+  backgroundPaper    String    @default("#ffffff")
+  gradient1          String    @default("#300216")
+  gradient2          String    @default("#FF7251")
+}
