@@ -25,8 +25,10 @@ export class AuthService {
 
     if (!pwMatches) throw new BadRequestException('Password incorrect');
 
+    const token = await this.getToken(user.id);
+
     return {
-      token: this.getToken(user.id),
+      token,
       role: user.role,
     };
   }
@@ -49,8 +51,10 @@ export class AuthService {
       },
     });
 
+    const token = await this.getToken(user.id);
+
     return {
-      token: this.getToken(user.id),
+      token,
       role: user.role,
     };
   }
