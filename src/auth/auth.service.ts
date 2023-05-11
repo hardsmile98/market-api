@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { LoginDto, RegisterDto } from './dto';
+import { ChangePasswordDto, LoginDto, RegisterDto } from './dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,10 @@ export class AuthService {
 
     if (!pwMatches) throw new BadRequestException('Password incorrect');
 
-    return this.getToken(user.id);
+    return {
+      token: this.getToken(user.id),
+      role: user.role,
+    };
   }
 
   async register(dto: RegisterDto) {
@@ -45,10 +49,39 @@ export class AuthService {
       },
     });
 
-    return this.getToken(user.id);
+    return {
+      token: this.getToken(user.id),
+      role: user.role,
+    };
   }
 
-  async getToken(userId: number): Promise<{ token: string }> {
+  async changePassword(user: User, dto: ChangePasswordDto) {
+    const { id, password } = user;
+    const { currentPassword, newPassword } = dto;
+
+    const pwMatches = await argon.verify(password, currentPassword);
+
+    if (!pwMatches) {
+      throw new BadRequestException('Incorrect current password');
+    }
+
+    const hash = await argon.hash(newPassword);
+
+    const newUserData = await this.prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        password: hash,
+      },
+    });
+
+    delete newUserData.password;
+
+    return newUserData;
+  }
+
+  async getToken(userId: number): Promise<string> {
     const payload = {
       userId,
     };
@@ -60,8 +93,6 @@ export class AuthService {
       secret: secret,
     });
 
-    return {
-      token,
-    };
+    return token;
   }
 }

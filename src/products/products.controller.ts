@@ -25,13 +25,13 @@ export class ProductsController {
     return this.productService.getProduct(id);
   }
 
-  // @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post('/')
   addProduct(@Body() dto: CreateProductDto) {
     return this.productService.addProduct(dto);
   }
 
-  // @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete('/')
   deleteProduct(@Body() dto: DeleteProductDto) {
     return this.productService.deleteProduct(dto);

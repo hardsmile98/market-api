@@ -17,7 +17,7 @@ export class ReviewsController {
     return this.reviewsService.addReview(dto);
   }
 
-  // @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete('/')
   deleteReview(@Body() dto: DeleteReviewDto) {
     return this.reviewsService.deleteReview(dto);
