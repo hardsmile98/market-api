@@ -1,24 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto, DeleteOrderDto, UpdateOrderDto } from './dto';
-import { Order, Payments, User } from '@prisma/client';
-import { PaymentsService } from 'src/payments/payments.service';
-
+import { User } from '@prisma/client';
+import { AuthService } from 'src/auth/auth.service';
 @Injectable()
 export class OrdersService {
   constructor(
     private prisma: PrismaService,
-    private paymentsService: PaymentsService,
+    private authService: AuthService,
   ) {}
 
-  formatterOrders(orders: Order[], payments: Payments[]) {
-    return orders.map((order) => ({
-      ...order,
-      payment: payments.find((payment) => payment.id === order.paymentId),
-    }));
-  }
+  async createOrder(auth: string, dto: CreateOrderDto) {
+    const userId = await this.authService.getUserIdByHeader(auth);
 
-  async createOrder(user: User, dto: CreateOrderDto) {
     const { price } = await this.prisma.product.findFirst({
       where: { id: dto.productId },
     });
@@ -26,14 +20,12 @@ export class OrdersService {
     const total = price * dto.count;
 
     return await this.prisma.order.create({
-      data: { ...dto, total, userId: user.id },
+      data: { ...dto, total, userId },
     });
   }
 
   async getOrders(user: User) {
     const { role } = user;
-
-    const payments = await this.paymentsService.getPayments();
 
     // Отдаем пользователю только свои заказы
     if (role === 'USER') {
@@ -41,13 +33,13 @@ export class OrdersService {
         where: { userId: user.id },
       });
 
-      return { orders: this.formatterOrders(orders, payments) };
+      return { orders };
     }
 
     // Администратору все заказы
     const orders = await this.prisma.order.findMany();
 
-    return { orders: this.formatterOrders(orders, payments) };
+    return { orders };
   }
 
   async getOrder(uuid: string) {

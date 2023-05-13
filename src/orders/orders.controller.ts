@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Headers,
   UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
@@ -29,8 +30,11 @@ export class OrdersController {
   }
 
   @Post('/')
-  addOrder(@GetUser() user: User, @Body() dto: CreateOrderDto) {
-    return this.ordersService.createOrder(user, dto);
+  addOrder(
+    @Headers('authorization') authHeader: string,
+    @Body() dto: CreateOrderDto,
+  ) {
+    return this.ordersService.createOrder(authHeader, dto);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)

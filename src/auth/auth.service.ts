@@ -85,6 +85,13 @@ export class AuthService {
     return newUserData;
   }
 
+  async getUserIdByHeader(authHeader: string) {
+    const token = authHeader?.split(' ')?.[1];
+    const payload = (await this.jwtService.decode(token)) as { userId: number };
+
+    return payload?.userId;
+  }
+
   async getToken(userId: number): Promise<string> {
     const payload = {
       userId,
