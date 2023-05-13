@@ -1,15 +1,22 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateProductDto, DeleteProductDto } from './dto';
+import { CreateProductDto, DeleteProductDto, UpdateProductDto } from './dto';
 import { isNumber } from 'class-validator';
+import { SettingsService } from 'src/settings/settings.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private settingsService: SettingsService,
+  ) {}
 
   async getProducts() {
+    const { currency } = await this.settingsService.getSettings();
+
     const items = await this.prisma.product.findMany();
-    return { items };
+
+    return { items, currency };
   }
 
   async getProduct(id: string) {
@@ -19,11 +26,13 @@ export class ProductsService {
       throw new BadRequestException('Incorrect id');
     }
 
+    const { currency } = await this.settingsService.getSettings();
+
     const item = await this.prisma.product.findFirst({
       where: { id: formattedId },
     });
 
-    return { item };
+    return { item, currency };
   }
 
   async addProduct(dto: CreateProductDto) {
@@ -36,5 +45,19 @@ export class ProductsService {
     }
 
     return await this.prisma.product.delete({ where: { id: dto.id } });
+  }
+
+  async updateProduct(dto: UpdateProductDto) {
+    const { id, oldPrice, ...otherData } = dto;
+
+    return await this.prisma.product.update({
+      where: {
+        id: id,
+      },
+      data: {
+        ...otherData,
+        oldPrice: oldPrice ? oldPrice : null,
+      },
+    });
   }
 }

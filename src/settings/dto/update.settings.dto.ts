@@ -1,4 +1,5 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { Currency } from '@prisma/client';
+import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateSettingsDto {
   @IsNumber()
@@ -9,6 +10,9 @@ export class UpdateSettingsDto {
 
   @IsOptional()
   buttonText: string;
+
+  @IsOptional()
+  telegram: string;
 
   @IsString()
   textPrimary: string;
@@ -36,4 +40,7 @@ export class UpdateSettingsDto {
 
   @IsString()
   gradient2: string;
+
+  @IsIn(['RUB', 'USD', 'EUR'])
+  currency: Currency;
 }

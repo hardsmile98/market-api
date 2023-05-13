@@ -25,8 +25,8 @@ model Product {
   id          Int      @id @default(autoincrement())
   images      String[]
   title       String   
-  price       String
-  oldPrice    String?
+  price       Int
+  oldPrice    Int?
   description String
   createdAt   DateTime @default(now())
 }
@@ -40,10 +40,18 @@ model Review {
   createdAt   DateTime @default(now())
 }
 
+enum Currency {
+  RUB
+  USD
+  EUR
+}
+
 model Settings {
   id           Int       @id @default(autoincrement())
   bannerImg    String    @default("")
   buttonText   String    @default("Купить")
+  currency     Currency  @default(USD)
+  telegram     String    @default("")
   textPrimary        String    @default("#000000")
   textSecondary      String    @default("#575757")
   secondaryMain      String    @default("#300216")
@@ -53,4 +61,26 @@ model Settings {
   backgroundPaper    String    @default("#ffffff")
   gradient1          String    @default("#300216")
   gradient2          String    @default("#FF7251")
+}
+
+model Payments {
+  id          Int      @id @default(autoincrement())
+  name        String
+  requisites  String
+}
+
+enum Status {
+  paid
+  await
+}
+
+model Order {
+  uuid        String   @id @default(uuid())
+  status      Status   @default(await)
+  userId      Int?
+  productId   Int
+  count       Int
+  total       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
