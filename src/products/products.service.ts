@@ -40,10 +40,6 @@ export class ProductsService {
   }
 
   async deleteProduct(dto: DeleteProductDto) {
-    if (!isNumber(dto.id)) {
-      throw new BadRequestException('Incorrect id');
-    }
-
     return await this.prisma.product.delete({ where: { id: dto.id } });
   }
 

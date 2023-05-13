@@ -77,6 +77,7 @@ enum Status {
 model Order {
   uuid        String   @id @default(uuid())
   status      Status   @default(await)
+  paymentId   Int
   userId      Int?
   productId   Int
   count       Int
