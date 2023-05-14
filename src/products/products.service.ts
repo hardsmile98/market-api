@@ -43,6 +43,12 @@ export class ProductsService {
     return await this.prisma.product.delete({ where: { id: dto.id } });
   }
 
+  async getProductById(id: number) {
+    return await this.prisma.product.findFirst({
+      where: { id: id },
+    });
+  }
+
   async updateProduct(dto: UpdateProductDto) {
     const { id, oldPrice, ...otherData } = dto;
 

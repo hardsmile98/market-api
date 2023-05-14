@@ -17,7 +17,6 @@ model User {
   login       String   @unique
   password    String
   role        Role     @default(USER)
-  orders      Order[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -68,21 +67,20 @@ model Payments {
   id          Int      @id @default(autoincrement())
   name        String
   requisites  String
-  order       Order?
 }
 
 enum Status {
   paid
   await
+  cancel
 }
 
 model Order {
   uuid        String   @id @default(uuid())
+  number      Int      @default(autoincrement())
   status      Status   @default(await)
-  paymentId   Int      @unique
-  payment     Payments @relation(fields: [paymentId], references: [id])
-  userId      Int?     @unique
-  user        User?    @relation(fields: [userId], references: [id])
+  paymentId   Int
+  userId      Int?    
   productId   Int
   count       Int
   total       Int

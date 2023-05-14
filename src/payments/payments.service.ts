@@ -10,6 +10,12 @@ export class PaymentsService {
     return await this.prisma.payments.findMany();
   }
 
+  async getPaymentById(id: number) {
+    return await this.prisma.payments.findFirst({
+      where: { id: id },
+    });
+  }
+
   async createPayment(dto: CreatePaymentDto) {
     return await this.prisma.payments.create({ data: dto });
   }

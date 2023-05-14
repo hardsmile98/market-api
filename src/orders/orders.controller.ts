@@ -10,7 +10,12 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { AdminGuard, JwtAuthGuard } from 'src/auth/guard';
-import { CreateOrderDto, DeleteOrderDto, UpdateOrderDto } from './dto';
+import {
+  CancelOrderDto,
+  CreateOrderDto,
+  DeleteOrderDto,
+  UpdateOrderDto,
+} from './dto';
 import { GetUser } from 'src/auth/decorator';
 import { User } from '@prisma/client';
 
@@ -41,6 +46,11 @@ export class OrdersController {
   @Post('/update')
   updateOrder(@Body() dto: UpdateOrderDto) {
     return this.ordersService.updateOrder(dto);
+  }
+
+  @Post('/cancel')
+  cancelOrder(@Body() dto: CancelOrderDto) {
+    return this.ordersService.cancelOrder(dto);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
